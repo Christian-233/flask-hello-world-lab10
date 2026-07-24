@@ -60,3 +60,44 @@ def inserting():
     conn.close()
 
     return "Basketball Table Populated"
+
+@app.route("/db_select")
+def selecting():
+    conn = psycopg2.connect("postgresql://db_3308_render_database_user:h9LRgUEYuV3Wuws6YX2rLBl62LOLhOgR@dpg-d9hor0d7vvec73ervrj0-a/db_3308_render_database")
+    cur = conn.cursor()
+
+    cur.execute("SELECT * FROM Basketball;")
+    records = cur.fetchall()
+
+    html = "<table border='1'>"
+    html += "<tr><th>First</th><th>Last</th><th>City</th><th>Name</th><th>Number</th></tr>"
+
+    for row in records:
+        html += "<tr>"
+
+        for value in row:
+            html += f"<td>{value}</td>"
+
+        html += "</tr>"
+
+    html += "</table>"
+
+    cur.close()
+    conn.close()
+
+    return html
+
+@app.route("/db_drop")
+def dropping():
+    conn = psycopg2.connect("postgresql://db_3308_render_database_user:h9LRgUEYuV3Wuws6YX2rLBl62LOLhOgR@dpg-d9hor0d7vvec73ervrj0-a/db_3308_render_database")
+    cur = conn.cursor()
+
+    cur.execute("""
+        DROP TABLE Basketball;
+    """)
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return "Basketball Table Successfully Dropped"
