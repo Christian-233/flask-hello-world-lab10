@@ -20,34 +20,43 @@ def db_test():
             conn.close()
 
 @app.route("/db_create")
-def db_create():
-    conn = None
-    cur = None
+def creating():
+    conn = psycopg2.connect("postgresql://db_3308_render_database_user:h9LRgUEYuV3Wuws6YX2rLBl62LOLhOgR@dpg-d9hor0d7vvec73ervrj0-a/db_3308_render_database")
+    cur = conn.cursor()
 
-    try:
-        conn = psycopg2.connect("postgresql://db_3308_render_database_user:h9LRgUEYuV3Wuws6YX2rLBl62LOLhOgR@dpg-d9hor0d7vvec73ervrj0-a/db_3308_render_database")
-        cur = conn.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS Basketball(
+            First varchar(255),
+            Last varchar(255),
+            City varchar(255),
+            Name varchar(255),
+            Number int
+        );
+    """)
 
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS Basketball(
-                First varchar(255),
-                Last varchar(255),
-                City varchar(255),
-                Name varchar(255),
-                Number int
-            );
-        """)
+    conn.commit()
+    cur.close()
+    conn.close()
 
-        conn.commit()
-        return "Basketball Table Created"
+    return "Basketball Table Created"
 
-    except Exception as e:
-        if conn is not None:
-            conn.rollback()
-        return f"Database error: {e}"
+@app.route("/db_insert")
+def inserting():
+    conn = psycopg2.connect("postgresql://db_3308_render_database_user:h9LRgUEYuV3Wuws6YX2rLBl62LOLhOgR@dpg-d9hor0d7vvec73ervrj0-a/db_3308_render_database")
+    cur = conn.cursor()
 
-    finally:
-        if cur is not None:
-            cur.close()
-        if conn is not None:
-            conn.close()
+    cur.execute("""
+        INSERT INTO Basketball (First, Last, City, Name, Number)
+        VALUES
+        ('Jayson', 'Tatum', 'Boston', 'Celtics', 0),
+        ('Stephen', 'Curry', 'San Francisco', 'Warriors', 30),
+        ('Nikola', 'Jokic', 'Denver', 'Nuggets', 15),
+        ('Kawhi', 'Leonard', 'Los Angeles', 'Clippers', 2),
+        ('Christian', 'Gore', 'CU Boulder', 'Buffaloes', 3308);
+    """)
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return "Basketball Table Populated"
