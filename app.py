@@ -1,6 +1,21 @@
 from flask import Flask
+import psycopg2
+
+conn = psycopg2.connect("postgresql://db_3308_render_database_user:h9LRgUEYuV3Wuws6YX2rLBl62LOLhOgR@dpg-d9hor0d7vvec73ervrj0-a/db_3308_render_database")
 app = Flask(__name__)
 
 @app.route("/")
 def index():
     return "Hello World from Christian Gore in 3308"
+    
+@app.route("/db_test")
+def db_test():
+    conn = None
+    try:
+        conn = psycopg2.connect("postgresql://db_3308_render_database_user:h9LRgUEYuV3Wuws6YX2rLBl62LOLhOgR@dpg-d9hor0d7vvec73ervrj0-a/db_3308_render_database")
+        return "Database connection successful"
+    except Exception as e:
+        return f"Database connection failed: {e}"
+    finally:
+        if conn is not None:
+            conn.close()
